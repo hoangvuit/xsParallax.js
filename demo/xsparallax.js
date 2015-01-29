@@ -58,29 +58,47 @@
             var imgUrl = '',
                 layers = $('.xspl-layer');
             layers.each(function (index) {
-                imgUrl = 'url(' + settings.bgFolder + '/' + 'xspl-bg-' + (index + 1) + settings.fileExtension + ')';
-                $(this).css({
-                    'background-image': imgUrl
-                });
+                imgUrl = settings.bgFolder + '/' + 'xspl-bg-' + (index + 1) + settings.fileExtension;
+                if ('ontouchmove' in window) {
+                    $(this).html('<img src="' + imgUrl + '" />').css('z-index', index);
+                    // $(this).find('img').width(windowH * 2);
+                } else {
+                    $(this).css({
+                        'background-image': 'url(' + imgUrl + ')'
+                    });
+                }
             });
         },
         scrolling = function (self) {
             var layers = self.find('.xspl-layer');
             if (settings.direction === 'vertical') {
-                var _event = ('ontouchmove' in window) ? 'touchmove' : 'scroll',
-                    distance;
-                $(window).on(_event, function (e) {
-                    $.each(layers, function (i, layer) {
-                        layer = $(layer);
-                        if (layer.offset().top < $(window).scrollTop() + settings.offset) {
-                            distance = -($(window).scrollTop() - layer.offset().top) / (20 - settings.speed);
-                            layer.css({
-                                'background-position': '50% ' + distance + 'px',
+                // if on touch device
+                if ('ontouchmove' in window) {
+                    var images = layers.find('img');
+                    $(window).on('touchmove scroll', function (e) {
+                        $.each(layers, function (i, layer) {
+                            layer = $(layer);
+                            layer.find('img').css({
+                                'top': (layer.offset().top - $(window).scrollTop()) / 50
                             });
-                            // utils.setCSS3Style(layer, 'transition', 'all 0.1s');
-                        }
+                        });
                     });
-                });
+                } else {
+                    $(window).on('scroll', function (e) {
+                        $.each(layers, function (i, layer) {
+                            layer = $(layer);
+                            if (layer.offset().top < $(window).scrollTop() + settings.offset) {
+                                distance = -($(window).scrollTop() - layer.offset().top) / (20 - settings.speed);
+                                layer.css({
+                                    'background-position': '50% ' + distance + 'px',
+                                });
+                            }
+                        });
+                    });
+                    $(function () {
+                        $.srSmoothscroll();
+                    });
+                }
             } else {
                 var scrollStage = self.find('.scroll-stage'),
                     duration = 500,
@@ -90,10 +108,6 @@
                     bgDistance = 0,
                     timerId, currentLayer = 0;
                 $(window).on('mousewheel', function (event) {
-                    // window.setTimeout(function () {
-
-                    // }, duration);
-
                     clearTimeout(timerId);
                     if ((currentLayer === 0) && (event.deltaY > 0)) {
                         return;
@@ -104,14 +118,12 @@
                     timerId = setTimeout(function () {
                         distance += event.deltaY * windowW;
                         currentLayer += event.deltaY;
-                        // scrollStage.css('margin-left', distance);                		
                         scrollStage.css({
                             'margin-left': distance
                         });
                         var index = Math.abs(currentLayer) - 1,
                             layer = layers.get(index),
                             currentBgPos = $(layer).css('background-position').split(' ')[0].replace('%', '');
-                        console.log(currentBgPos);
                         bgDistance = 50 - ((currentLayer + 1) * bgScrollFactor);
                         layers.css('background-position', bgDistance + '% 0');
                     }, 100);
@@ -132,7 +144,4 @@ $('#parallax').xsParallax({
     direction: 'vertical',
     speed: 5,
     offset: 0
-});
-$(function () {
-    $.srSmoothscroll();
 });
