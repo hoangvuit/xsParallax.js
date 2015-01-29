@@ -6,14 +6,31 @@ html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address
 	background-repeat: no-repeat;
 	background-position: 50% 0;
 	background-attachment: fixed;
-	font-size: 0;
+}
+.horizontal{
+	overflow: hidden;
 }
 .horizontal:after{
-	content: "";
+	/*content: "";
 	display: inline-block;
 	height: 1px;
 	clear: both;
+	width: 100%;*/
 }
+.scroll-stage{
+	/*overflow: hidden;*/
+	-webkit-transition: all .5s;
+	   -moz-transition: all .5s;
+	    -ms-transition: all .5s;
+	     -o-transition: all .5s;
+	        transition: all .5s;
+} 
+
 .horizontal .xspl-layer{
 	float: left;
+	-webkit-transition: all .5s linear;
+	   -moz-transition: all .5s linear;
+	    -ms-transition: all .5s linear;
+	     -o-transition: all .5s linear;
+	        transition: all .5s linear;		
 }
