@@ -95,9 +95,6 @@
                             }
                         });
                     });
-                    $(function () {
-                        $.srSmoothscroll();
-                    });
                 }
             } else {
                 var scrollStage = self.find('.scroll-stage'),
